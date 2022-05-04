@@ -206,13 +206,12 @@ jobs:
 
   smoke-test:
     docker:
-      # Lightweight Docker image 
+      - image: alpine:latest
     steps:
       # Checkout code from git
       - run:
           name: Install dependencies
-          command: |
-            # your code here
+          command: apk add --update curl
       - run:
           name: Get backend url
           command: |
