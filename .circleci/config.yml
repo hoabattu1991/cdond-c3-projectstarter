@@ -136,19 +136,17 @@ jobs:
       # Docker image here that supports Ansible
       - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - checkout
+      - add_ssh_keys: 
+        fingerprints: ["24:4c:0d:78:a2:e6:0f:b2:e4:34:69:3e:61:d3:18:6e"]
       - run:
           name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            apk add --update ansible 
       - run:
           name: Configure server
           command: |
-            # Your code here
-            exit 1
+            ansible-playbook -i .circleci/ansible/inventory.txt playbook.yml
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
