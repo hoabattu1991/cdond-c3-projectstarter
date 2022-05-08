@@ -40,6 +40,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - slack/notify:
+          channel: https://nghiabk.slack.com/archives/C03DXJ4KS31
           template: success_tagged_deploy_1
   
   build-frontend:
@@ -127,7 +128,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical --force
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
