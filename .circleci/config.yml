@@ -37,7 +37,7 @@ commands:
 jobs:
   notify:
     docker:
-      - image: 'cimg/base:stable'
+      - image: cimg/base:stable
     steps:
       - run: echo "deploy my app"
       - slack/notify:
@@ -63,6 +63,9 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   build-backend:
     docker:
@@ -315,7 +318,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - notify
+      # - notify
       - build-frontend
       - build-backend
       - test-frontend:
