@@ -40,7 +40,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - slack/notify:
-          channel: https://app.slack.com/client/T9PNUN729/C9QESRWNS
+          channel: https://nghiabk.slack.com/archives/C9QESRWNS
           template: success_tagged_deploy_1
   
   build-frontend:
