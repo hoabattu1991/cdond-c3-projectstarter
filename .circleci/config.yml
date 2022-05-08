@@ -1,6 +1,6 @@
 version: 2.1
 orbs: 
-  slack: circleci/slack@4.10.1
+  slack: circleci/slack@4.4.4
 
 commands:
   destroy-environment:
@@ -35,18 +35,12 @@ commands:
             fi
             
 jobs:
-  notify:
+  example-job:
     docker:
       - image: cimg/base:stable
     steps:
-      - run: echo "deploy my app"
-      - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
+      - slack/notify
+  
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -318,7 +312,7 @@ jobs:
 workflows:
   default:
     jobs:
-      # - notify
+      - example-job
       - build-frontend
       - build-backend
       - test-frontend:
