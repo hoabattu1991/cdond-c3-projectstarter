@@ -1,6 +1,4 @@
 version: 2.1
-orbs: 
-  slack: circleci/slack@4.10.1
 
 commands:
   destroy-environment:
@@ -35,34 +33,6 @@ commands:
             fi
             
 jobs:
-  example-job:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      # - slack/notify:
-      #     custom: |
-      #       {
-      #         "blocks": [
-      #           {
-      #             "type": "section",
-      #             "fields": [
-      #               {
-      #                 "type": "plain_text",
-      #                 "text": "*This is a text notification*",
-      #                 "emoji": true
-      #               }
-      #             ]
-      #           }
-      #         ]
-      #       }
-      #     event: always
-      # - slack/notify:
-      #     event: fail
-      #     template: basic_fail_1
-  
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -145,10 +115,8 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
+            npm audit fix --audit-level=critical --force
+
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -334,7 +302,6 @@ jobs:
 workflows:
   default:
     jobs:
-      - example-job
       - build-frontend
       - build-backend
       - test-frontend:
