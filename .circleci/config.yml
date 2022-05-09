@@ -40,7 +40,6 @@ jobs:
       - image: cimg/base:stable
     steps:
       - slack/notify:
-          channel: https://nghiabk.slack.com/archives/C9QESRWNS
           event: pass
           template: success_tagged_deploy_1
   
