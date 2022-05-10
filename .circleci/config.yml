@@ -175,7 +175,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys: 
-          fingerprints: ["15:c3:4d:ac:01:25:9d:70:0f:81:42:ac:67:2e:eb:92"]
+          fingerprints: ["a7:8a:c8:06:90:2a:6d:c4:46:b9:b3:ea:3a:0e:f5:cd"]
       - run:
           name: Install dependencies
           command: |
@@ -183,7 +183,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            ansible-playbook -i .circleci/ansible/inventory.txt playbook.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
