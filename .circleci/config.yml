@@ -227,8 +227,6 @@ jobs:
           command: |
             yum install -y tar gzip
             yum install -y unzip      
-      - attach_workspace:
-          at: .
       - run:
           name: Install dependencies
           command: |
@@ -276,26 +274,28 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["a7:8a:c8:06:90:2a:6d:c4:46:b9:b3:ea:3a:0e:f5:cd"]
       # attach workspace
+      - attach_workspace:
+          at: .
       - run:
           name: Install dependencies
           command: |
-          # code here
+            apk add --update ansible curl rsync openssh nodejs npm
+            ansible --version
+            pip install awscli
+            aws --version
       - run:
           name: Deploy backend
           command: |
             # your code here
             cd backend
-            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-            yum -y install nodejs
-            npm install -g npm
-            npm install oauth2
-            npm install webpack
-            apt-get install -yy npm
             npm i
             npm run build
+            cp package* ./dist
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
+            mkdir .circleci/ansible/roles/deploy/files
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -307,6 +307,7 @@ jobs:
       - image: alpine:latest
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: apk add --update curl
