@@ -228,22 +228,17 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - run:
-          name: Install tar/gzip utility
-          command: |
-            yum install -y tar gzip
-            yum install -y unzip      
-      - run:
+      - run: 
           name: Install dependencies
           command: |
-            apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+            yum -y install nodejs
+            npm install -g npm
+            npm install oauth2
+            npm install webpack
       - run:
           name: Get backend url
           command: |
-            # your code here
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
@@ -254,11 +249,6 @@ jobs:
           command: |
             # your code here
             cd frontend
-            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-            yum -y install nodejs
-            npm install -g npm
-            npm install oauth2
-            npm install webpack
             npm install
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
