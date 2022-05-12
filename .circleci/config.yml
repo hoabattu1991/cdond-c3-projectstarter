@@ -190,12 +190,18 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/base:2021.04
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
       - restore_cache:
           keys: [backend-build]
+      - run:
+          name: Install PIP
+          command: sudo apt-get install python-pip python-dev
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
       - run:
           name: Run migrations
           command: |
