@@ -10,26 +10,26 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
-
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here
+        workflow_id:
+            type: string
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS=$(curl --insecure  https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_<< parameters.workflow_id >>)
+
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
             fi
             
 jobs:
@@ -205,12 +205,12 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
+              echo "insecure" >> ~/.curlrc
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
               then
                 # If you are using memstash.io, generate the token "7933fe63-4687-4fa1-8426-aa25aa1730ec" on the website
                 # curl -H "Content-Type: text/plain" -H "token: 7933fe63-4687-4fa1-8426-aa25aa1730ec" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
                 # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
-                echo "insecure" >> ~/.curlrc
                 curl https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               fi
      # Here's where you will add some code to rollback on failure      
@@ -262,7 +262,7 @@ jobs:
           paths:
             - frontend/dist
       # Here's where you will add some code to rollback on failure      
-                    
+      - destroy-environment              
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
@@ -301,6 +301,7 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
+      - destroy-environment
 
   smoke-test:
     docker:
