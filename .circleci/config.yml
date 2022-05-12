@@ -262,15 +262,11 @@ jobs:
       - destroy-environment              
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      # Checkout code from git
-      # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: ["a7:8a:c8:06:90:2a:6d:c4:46:b9:b3:ea:3a:0e:f5:cd"]
-      # attach workspace
       - attach_workspace:
           at: .
       - run:
@@ -302,16 +298,15 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
-          name: Install dependencies
-          command: |
-            apk add --update curl
-            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-            yum -y install nodejs
-            npm install -g npm
+          name: Install PIP
+          command: sudo apt-get install python-pip python-dev
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
       - run:
           name: Get backend url
           command: |
