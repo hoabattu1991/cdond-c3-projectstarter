@@ -159,6 +159,7 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
           name: Add back-end ip to ansible inventory
+          working_directory: ./.circleci/ansible
           command: |
             aws ec2 describe-instances \
                --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -178,6 +179,8 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - add_ssh_keys: 
           fingerprints: ["a7:8a:c8:06:90:2a:6d:c4:46:b9:b3:ea:3a:0e:f5:cd"]
       - run:
