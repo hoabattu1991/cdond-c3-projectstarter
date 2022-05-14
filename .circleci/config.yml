@@ -25,9 +25,9 @@ commands:
           # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl --insecure  https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_<< parameters.workflow_id >>)
+            SUCCESS = $(curl --insecure  https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_<< parameters.workflow_id >>)
 
-            if(( $SUCCESS==1 )); 
+            if(( SUCCESS==1 )); 
             then
               cd ~/project/backend
               npm install
@@ -222,6 +222,8 @@ jobs:
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
               then
                 curl https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              else
+                curl https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '0'
               fi
       # Here's where you will add some code to rollback on failure
       - destroy-environment
@@ -321,7 +323,7 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "url: ${API_URL}/api/status"
 
-            if curl --connect-timeout 3 -retry 3 --retry-delay 2 "${API_URL}/api/status" | grep "ok"
+            if curl --connect-timeout 30 -retry 5 --retry-delay 5 "${API_URL}/api/status" | grep "ok"
             then
               exit 0
             else
