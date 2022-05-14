@@ -342,7 +342,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            - run: yum install -y tar gzip
       - run:
           name: Update cloudfront distribution
           command: |
@@ -368,6 +368,10 @@ jobs:
         - image: amazon/aws-cli
       steps:
         - checkout
+        - run:
+            name: Install dependencies
+            command: |
+              - run: yum install -y tar gzip
         - attach_workspace:
             at: ~/
         - run:
