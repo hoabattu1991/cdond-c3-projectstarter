@@ -342,7 +342,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            - run: yum install -y tar gzip
+            yum install -y tar gzip
       - run:
           name: Update cloudfront distribution
           command: |
@@ -371,7 +371,7 @@ jobs:
         - run:
             name: Install dependencies
             command: |
-              - run: yum install -y tar gzip
+              yum install -y tar gzip
         - attach_workspace:
             at: ~/
         - run:
