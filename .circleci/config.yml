@@ -354,7 +354,7 @@ jobs:
                     --template-file .circleci/files/cloudfront.yml \
                     --stack-name InitialStack \
                     --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
-                    --tags project=udapeople
+                    --tags project=cdond-c3-projectstarter
       - destroy-environment
       - revert-migrations
 
