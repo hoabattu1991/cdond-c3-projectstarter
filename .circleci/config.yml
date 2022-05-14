@@ -220,16 +220,13 @@ jobs:
               then
                 curl https://kvdb.io/2J5uaPwFPjMpToPKuy4FFT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               fi
-      # Here's where you will add some code to rollback on failure
       - destroy-environment
       - revert-migrations
 
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
       - image: amazon/aws-cli
     steps:
-      # Checkout code from git
       - checkout
       - run: 
           name: Install dependencies
@@ -251,7 +248,6 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
             cd frontend
             npm install
             npm run build
@@ -261,7 +257,6 @@ jobs:
           root: .
           paths:
             - frontend/dist
-      # Here's where you will add some code to rollback on failure      
       - destroy-environment              
   deploy-backend:
     docker:
@@ -297,8 +292,8 @@ jobs:
             cat inventory.txt
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # Here's where you will add some code to rollback on failure  
       - destroy-environment
+      - revert-migrations
 
   smoke-test:
     docker:
@@ -353,12 +348,12 @@ jobs:
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            echo OldWorkflowID: $OldWorkflowID
+            echo "TEST: ${OldWorkflowID}"
 
             aws cloudformation deploy \
                     --template-file .circleci/files/cloudfront.yml \
                     --stack-name InitialStack \
-                    --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+                    --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
                     --tags project=cdond-c3-projectstarter
       - destroy-environment
       - revert-migrations
