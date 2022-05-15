@@ -385,9 +385,9 @@ jobs:
             command: |
               export OldWorkflowID=$(cat ~/OldWorkflowID.txt)
               echo OldWorkflowID: "${OldWorkflowID}"
-              echo $OldWorkflowID
+              echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
             
-              if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+              if [[ "${OldWorkflowID}" != "" && "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
               then
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
                 aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
